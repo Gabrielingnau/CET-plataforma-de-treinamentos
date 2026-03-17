@@ -2,7 +2,8 @@ import { createClient } from "@/lib/supabase/server"
 import { UserRole } from "@/types/navigation/nav-item.type"
 
 export async function getUserRole(): Promise<UserRole | null> {
-  const supabase = createClient()
+  // Adicione o await aqui embaixo:
+  const supabase = await createClient()
 
   const {
     data: { user },
