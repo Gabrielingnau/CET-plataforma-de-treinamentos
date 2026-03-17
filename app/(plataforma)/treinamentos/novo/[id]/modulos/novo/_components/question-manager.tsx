@@ -3,7 +3,7 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Plus, Trash2, Edit2, HelpCircle, CheckCircle } from "lucide-react"
+import { Plus, Edit2, HelpCircle, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { QuestionForm } from "./question-form"
 import { DeleteConfirmModal } from "./modal/delete-confirm-modal"

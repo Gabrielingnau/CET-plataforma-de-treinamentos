@@ -1,6 +1,5 @@
 // app/(plataforma)/treinamentos/novo/[id]/modulos/novo/page.tsx
 
-import { getTrainingById } from "@/services/trainings/get-training";
 import { createClient } from "@/lib/supabase/server";
 import CourseBuilderClient from "./_components/course-builder-layout"; // Ajuste o caminho se necessário
 import { notFound } from "next/navigation";

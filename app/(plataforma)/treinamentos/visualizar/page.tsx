@@ -1,13 +1,8 @@
 // app/(plataforma)/treinamentos/visualizar/page.tsx
 import { createClient } from "@/lib/supabase/server";
 import { HierarchicalEditor } from "./_components/hierarchical-editor";
-import { notFound } from "next/navigation";
 
-export default async function VisualizarTreinamentosPage({ 
-  searchParams 
-}: { 
-  searchParams: { id?: string } 
-}) {
+export default async function VisualizarTreinamentosPage() {
   const supabase = await createClient();
 
   // 1. Busca todos os treinamentos para a listagem/sidebar

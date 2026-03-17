@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export function DeleteTrainingModal({ trainingId, trainingTitle }: { trainingId: string, trainingTitle: string }) {
+export function DeleteTrainingModal({ trainingId: _trainingId, trainingTitle }: { trainingId: string, trainingTitle: string }) {
   const [confirmText, setConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 

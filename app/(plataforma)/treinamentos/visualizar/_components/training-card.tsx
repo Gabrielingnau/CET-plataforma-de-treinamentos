@@ -1,5 +1,5 @@
 // app/treinamentos/_components/training-card.tsx
-import { Edit, Trash2, BookOpen, Clock } from "lucide-react";
+import { Edit, BookOpen, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DeleteTrainingModal } from "./delete-training-modal";

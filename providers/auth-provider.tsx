@@ -25,7 +25,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     staleTime: 1000 * 60 * 5, // 5 minutos antes de refazer fetch
   })
 
-  const session = supabase.auth.getSession().then((r) => r.data.session) // opcional
+  const _session = supabase.auth.getSession().then((r) => r.data.session) // opcional
 
   return (
     <AuthContext.Provider

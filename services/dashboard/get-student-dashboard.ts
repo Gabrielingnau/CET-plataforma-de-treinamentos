@@ -1,8 +1,7 @@
-import { supabase } from "@/lib/supabase/client"
 import { StudentDashboardStats } from "@/types/dashboard/student-dashboard"
 
 export async function getStudentDashboard(
-  userId: string
+  _userId: string
 ): Promise<StudentDashboardStats> {
   // TODO: implement logic for student dashboard
   return {
