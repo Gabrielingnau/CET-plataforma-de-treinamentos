@@ -46,7 +46,7 @@ export default function CourseBuilderClient({ training, initialStructure }: any)
   if (!training?.id) return null;
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background">
+    <div className="flex flex-col overflow-hidden bg-background">
       <TrainingHeader training={training} setEditor={setEditor} />
       
       <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
@@ -57,7 +57,7 @@ export default function CourseBuilderClient({ training, initialStructure }: any)
           trainingId={training.id}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-10 bg-muted/5">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-10 bg-muted/5 h-[70vh]">
           <div className="max-w-4xl mx-auto bg-card p-6 rounded-xl border shadow-sm">
             {editor.type === "idle" && (
               <div className="text-center py-20 text-muted-foreground">

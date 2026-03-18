@@ -1,4 +1,3 @@
-// _components/module-form.tsx
 "use client"
 
 import { useForm } from "react-hook-form"
@@ -12,6 +11,8 @@ import { Button } from "@/components/ui/button"
 import { moduleSchema, ModuleFormData } from "@/types/forms/module-form"
 import { createModule } from "@/services/modules/create-module"
 import { updateModule } from "@/services/modules/update-module"
+import { deleteModule } from "@/services/modules/delete-module" // Importe o serviço de delete
+import { DeleteConfirmModal } from "./modal/delete-confirm-modal" // Importe o seu modal
 
 export function ModuleForm({
   trainingId,
@@ -36,9 +37,9 @@ export function ModuleForm({
     },
   })
 
+  // Mutation para Salvar (Criar ou Editar)
   const saveMutation = useMutation({
     mutationFn: (data: ModuleFormData) => {
-      // LIMPEZA: Remove campos de relação (lessons) que o Supabase não aceita no update
       const { ...cleanData } = data as any
       return isEditing
         ? updateModule(defaultValues.id, cleanData)
@@ -51,6 +52,20 @@ export function ModuleForm({
       toast.success(isEditing ? "Módulo atualizado" : "Módulo criado")
       onCancel()
     },
+    onError: () => toast.error("Erro ao salvar módulo")
+  })
+
+  // Mutation para Excluir
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteModule(defaultValues.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["training-structure", trainingId],
+      })
+      toast.success("Módulo excluído com sucesso")
+      onCancel()
+    },
+    onError: () => toast.error("Erro ao excluir módulo. Verifique se existem aulas vinculadas.")
   })
 
   return (
@@ -58,29 +73,45 @@ export function ModuleForm({
       onSubmit={handleSubmit((data) => saveMutation.mutate(data))}
       className="space-y-5"
     >
-      <h3 className="border-b pb-4 text-xl font-bold">
-        {isEditing ? "Editar Módulo" : "Novo Módulo"}
-      </h3>
+      {/* Cabeçalho com Título e Botão de Excluir */}
+      <div className="flex items-center justify-between border-b pb-4">
+        <h3 className="text-xl font-bold">
+          {isEditing ? "Editar Módulo" : "Novo Módulo"}
+        </h3>
+        
+        {isEditing && (
+          <DeleteConfirmModal
+            title={defaultValues.titulo}
+            onConfirm={() => deleteMutation.mutate()}
+          />
+        )}
+      </div>
 
       <div className="space-y-2">
         <Label>Título do Módulo</Label>
-        <Input {...register("titulo")} />
+        <Input {...register("titulo")} placeholder="Ex: Introdução ao curso" />
         {errors.titulo && (
-          <p className="text-xs text-destructive">{errors.titulo.message}</p>
+          <p className="text-xs font-medium text-destructive">{errors.titulo.message}</p>
         )}
       </div>
 
       <div className="space-y-2">
         <Label>Descrição</Label>
-        <Input {...register("descricao")} />
+        <Input {...register("descricao")} placeholder="Breve resumo do conteúdo do módulo" />
+        {errors.descricao && (
+          <p className="text-xs font-medium text-destructive">{errors.descricao.message}</p>
+        )}
       </div>
 
       <div className="flex justify-end gap-3 border-t pt-4">
         <Button type="button" variant="ghost" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Salvando..." : "Salvar Módulo"}
+        <Button 
+          type="submit" 
+          disabled={isSubmitting || deleteMutation.isPending}
+        >
+          {isSubmitting ? "Salvando..." : isEditing ? "Salvar Alterações" : "Criar Módulo"}
         </Button>
       </div>
     </form>

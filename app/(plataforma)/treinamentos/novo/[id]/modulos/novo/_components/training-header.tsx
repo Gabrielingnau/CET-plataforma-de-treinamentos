@@ -1,16 +1,39 @@
-// _components/training-header.tsx
+"use client" // Garante que as interações funcionem
+
 import { EditTrainingModal } from "./modal/edit-training-modal"
 import { DeleteConfirmModal } from "./modal/delete-confirm-modal"
 import { Button } from "@/components/ui/button"
 import { FileQuestion, Clock, Target } from "lucide-react"
+import { useMutation } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { deleteTraining } from "@/services/trainings/delete-training" // Certifique-se de que este serviço existe
 
 export function TrainingHeader({ training, setEditor }: any) {
+  const router = useRouter()
+
+  // Implementação da lógica de exclusão
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteTraining(training.id),
+    onSuccess: () => {
+      toast.success("Treinamento excluído com sucesso!")
+      router.push("/treinamentos/novo") // Redireciona para a lista de treinamentos
+    },
+    onError: (error: any) => {
+      console.error(error)
+      toast.error("Erro ao excluir treinamento", {
+        description: "Verifique se existem alunos matriculados ou outros vínculos."
+      })
+    }
+  })
+
   return (
     <header className="z-20 w-full border-b bg-card p-4 shadow-sm">
       <div className="mx-auto flex max-w-[1800px] flex-col items-center justify-between gap-4 md:flex-row">
         <div className="flex items-center gap-4">
           <img
             src={training.cover_url}
+            alt={training.titulo}
             className="h-14 w-20 rounded border object-cover"
           />
           <div>
@@ -36,8 +59,14 @@ export function TrainingHeader({ training, setEditor }: any) {
           >
             <FileQuestion size={16} /> Prova Final
           </Button>
+          
           <EditTrainingModal training={training} />
-          <DeleteConfirmModal title={training.titulo} onConfirm={() => {}} />
+          
+          {/* Agora o onConfirm chama a mutation */}
+          <DeleteConfirmModal 
+            title={training.titulo} 
+            onConfirm={() => deleteMutation.mutate()} 
+          />
         </div>
       </div>
     </header>

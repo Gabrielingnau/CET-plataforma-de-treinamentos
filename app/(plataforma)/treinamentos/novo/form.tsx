@@ -1,187 +1,245 @@
-"use client";
+"use client"
 
-import { useState, useContext } from "react"; // Adicionado useContext
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
-import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { AlertTriangle, FileText, Layout } from "lucide-react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useState, useContext } from "react"
+import { useForm, Controller } from "react-hook-form"
+import { toast } from "sonner"
 
-// Contexto de Autenticação
-import { AuthContext } from "@/contexts/auth-context"; 
-
-// UI Components
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-
-// Tipagens e Service
-import { trainingSchema, TrainingFormData } from "@/types/forms/training-form";
-import { createTraining } from "@/services/trainings/create-training";
+import { yupResolver } from "@hookform/resolvers/yup"
+import { useQueryClient, useQuery } from "@tanstack/react-query"
+import { AuthContext } from "@/contexts/auth-context"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { uploadFile } from "@/services/storage/upload-file"
+import { trainingSchema } from "@/types/forms/training-form"
+import { createTraining } from "@/services/trainings/create-training"
+import { supabase } from "@/lib/supabase/client" // Certifique-se de importar seu client do supabase
 
 export function CreateTrainingForm() {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { user } = useContext(AuthContext); // Pegando o usuário do contexto
-  
-  const queryClient = useQueryClient();
-  const router = useRouter();
+  const [isUploading, setIsUploading] = useState(false)
+  const { user } = useContext(AuthContext)
+  const queryClient = useQueryClient()
+  const router = useRouter()
+
+  // Busca os templates ativos para o Select
+  const { data: templates = [] } = useQuery({
+    queryKey: ["templates-ativos"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("certificate_templates")
+        .select("*")
+        .eq("ativo", true)
+      if (error) throw error
+      return data
+    },
+  })
 
   const {
     handleSubmit,
     register,
-    reset,
+    control,
     formState: { isSubmitting, errors },
-  } = useForm<TrainingFormData>({
+  } = useForm<any>({
     resolver: yupResolver(trainingSchema),
     defaultValues: {
       pontuacao_aprovacao: 70,
       max_exam_tentativas: 3,
     },
-  });
+  })
 
-  const { mutateAsync: createTrainingFn } = useMutation({
-    mutationFn: createTraining,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["trainings"] });
-      toast.success("Treinamento cadastrado com sucesso");
-      // Próximo passo: Criar módulos
-      router.push(`/treinamentos/novo/${data.id}/modulos/novo`);
-    },
-  });
-
-  async function handleCreateTraining(data: TrainingFormData) {
+  async function handleCreateTraining(data: any) {
     try {
-      setErrorMessage(null);
+      if (!user?.id) return toast.error("Você precisa estar logado.")
+      setIsUploading(true)
 
-      // Verificação de segurança: se não houver user, não deixa prosseguir
-      if (!user?.id) {
-        toast.error("Você precisa estar logado para criar um treinamento");
-        return;
+      let finalCoverUrl = ""
+
+      if (data.cover_url && data.cover_url[0]) {
+        finalCoverUrl = await uploadFile(data.cover_url[0], "imagem")
       }
 
-      // Injetamos o ID do usuário no payload que vai para o Supabase/API
-      await createTrainingFn({
+      const payload = {
         ...data,
-        criado_por: user.id, // O campo que você solicitou
-      });
-      
-      reset();
-    } catch (error: unknown) {
-      const err = error as AxiosError;
-      if (err.response?.data) {
-        const errorData = err.response.data as { errors?: string[] };
-        setErrorMessage(errorData.errors?.[0] || "Erro desconhecido do servidor");
-      } else {
-        setErrorMessage(err.message || "Erro inesperado");
+        cover_url: finalCoverUrl,
+        criado_por: user.id,
+        // Garante que o template_id seja enviado como número ou null
+        template_id: data.template_id ? Number(data.template_id) : null,
       }
-      toast.error("Falha ao salvar treinamento");
+
+      const result = await createTraining(payload)
+      queryClient.invalidateQueries({ queryKey: ["trainings"] })
+      toast.success("Treinamento criado com sucesso!")
+      router.push(`/treinamentos/novo/${result.id}/modulos/novo`)
+    } catch (error) {
+      console.error(error)
+      toast.error("Falha ao criar treinamento.")
+    } finally {
+      setIsUploading(false)
     }
   }
 
   return (
     <form onSubmit={handleSubmit(handleCreateTraining)} className="space-y-6">
-      {errorMessage && (
-        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm font-medium">
-          {errorMessage}
+      <div className="flex flex-col gap-6 items-start md:flex-row">
+        {/* Imagem de Capa */}
+        <div className="space-y-2">
+          <Label>Imagem de Capa (Upload)</Label>
+          <Input type="file" accept="image/*" {...register("cover_url")} />
+          {errors.cover_url && (
+            <p className="text-xs font-medium text-destructive">
+              {errors.cover_url.message as string}
+            </p>
+          )}
         </div>
-      )}
 
-      {/* URL da Capa */}
-      <div className="space-y-2">
-        <Label htmlFor="cover_url">URL da Capa</Label>
-        <Input
-          id="cover_url"
-          placeholder="https://exemplo.com/foto.jpg"
-          required={!!errors.cover_url?.message}
-          {...register("cover_url")}
-        />
-        {errors.cover_url?.message && (
-          <p className="text-sm text-destructive">{errors.cover_url?.message}</p>
-        )}
+        <div className="space-y-2">
+          <Label className="flex items-center h-3.5  text-sm font-semibold">
+            <Layout size={14} className="text-primary" />
+            Template do Certificado
+          </Label>
+
+          <Controller
+            name="template_id"
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger
+                  className={`h-12 border-2 transition-all ${errors.template_id ? "border-destructive bg-destructive/5" : "border-input focus:border-primary m-0"}`}
+                >
+                  <SelectValue placeholder="Selecione o modelo do certificado" />
+                </SelectTrigger>
+
+                <SelectContent className="rounded-xl border-primary/10 shadow-2xl mt-22">
+                  <div className="p-2 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                    Modelos Disponíveis
+                  </div>
+                  {templates
+                    .filter((t) => t.ativo)
+                    .map((t: any) => (
+                      <SelectItem
+                        key={t.id}
+                        value={t.id.toString()}
+                        className="mb-1 cursor-pointer rounded-lg border border-transparent transition-colors focus:border-primary/20 focus:bg-primary/5"
+                      >
+                        <div className="flex items-center gap-4 py-1">
+                          <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded-md border bg-muted shadow-inner">
+                            {t.capa_url ? (
+                              <Image
+                                src={t.capa_url}
+                                alt=""
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center bg-muted">
+                                <FileText size={16} />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold tracking-tight text-foreground">
+                              {t.titulo}
+                            </span>
+                            <span className="line-clamp-1 text-[11px] text-muted-foreground italic">
+                              {t.descricao || "Sem descrição"}
+                            </span>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.template_id && (
+            <p className="flex animate-pulse items-center gap-1 text-[11px] font-bold text-destructive">
+              <AlertTriangle size={12} /> {errors.template_id.message as string}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Título */}
       <div className="space-y-2">
-        <Label htmlFor="titulo">Título do Treinamento</Label>
+        <Label>Título do Treinamento</Label>
         <Input
-          id="titulo"
-          required={!!errors.titulo?.message}
           {...register("titulo")}
+          placeholder="Ex: Treinamento de Vendas"
         />
-        {errors.titulo?.message && (
-          <p className="text-sm text-destructive">{errors.titulo?.message}</p>
+        {errors.titulo && (
+          <p className="text-xs font-medium text-destructive">
+            {errors.titulo.message as string}
+          </p>
         )}
       </div>
 
       {/* Descrição */}
       <div className="space-y-2">
-        <Label htmlFor="descricao">Descrição</Label>
+        <Label>Descrição Completa</Label>
         <Textarea
-          id="descricao"
-          className="min-h-[100px]"
-          required={!!errors.descricao?.message}
           {...register("descricao")}
+          placeholder="Descreva os objetivos do treinamento..."
         />
-        {errors.descricao?.message && (
-          <p className="text-sm text-destructive">{errors.descricao?.message}</p>
+        {errors.descricao && (
+          <p className="text-xs font-medium text-destructive">
+            {errors.descricao.message as string}
+          </p>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Carga Horária - Note que usei carga_Horaria (H maiúsculo) se seu schema exigir */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {/* Carga Horária */}
         <div className="space-y-2">
-          <Label htmlFor="carga_Horaria">Carga Horária</Label>
-          <Input
-            id="carga_Horaria"
-            placeholder="Ex: 20h"
-            required={!!errors.carga_horaria?.message}
-            {...register("carga_horaria")}
-          />
-          {errors.carga_horaria?.message && (
-            <p className="text-sm text-destructive">
-              {errors.carga_horaria?.message}
+          <Label>Carga Horária</Label>
+          <Input {...register("carga_horaria")} placeholder="Ex: 20h" />
+          {errors.carga_horaria && (
+            <p className="text-xs font-medium text-destructive">
+              {errors.carga_horaria.message as string}
             </p>
           )}
         </div>
 
-        {/* Pontuação Mínima */}
+        {/* Pontuação */}
         <div className="space-y-2">
-          <Label htmlFor="pontuacao_aprovacao">Mínimo para Aprovação</Label>
-          <Input
-            id="pontuacao_aprovacao"
-            type="number"
-            required={!!errors.pontuacao_aprovacao?.message}
-            {...register("pontuacao_aprovacao")}
-          />
-          {errors.pontuacao_aprovacao?.message && (
-            <p className="text-sm text-destructive">
-              {errors.pontuacao_aprovacao?.message}
+          <Label>Min. p/ Aprovação (%)</Label>
+          <Input type="number" {...register("pontuacao_aprovacao")} />
+          {errors.pontuacao_aprovacao && (
+            <p className="text-xs font-medium text-destructive">
+              {errors.pontuacao_aprovacao.message as string}
             </p>
           )}
         </div>
 
-        {/* Tentativas Máximas */}
+        {/* Tentativas */}
         <div className="space-y-2">
-          <Label htmlFor="max_exam_tentativas">Máximo de Tentativas</Label>
-          <Input
-            id="max_exam_tentativas"
-            type="number"
-            required={!!errors.max_exam_tentativas?.message}
-            {...register("max_exam_tentativas")}
-          />
-          {errors.max_exam_tentativas?.message && (
-            <p className="text-sm text-destructive">
-              {errors.max_exam_tentativas?.message}
+          <Label>Máx. Tentativas Prova</Label>
+          <Input type="number" {...register("max_exam_tentativas")} />
+          {errors.max_exam_tentativas && (
+            <p className="text-xs font-medium text-destructive">
+              {errors.max_exam_tentativas.message as string}
             </p>
           )}
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting || !user}>
-        {isSubmitting ? "Cadastrando..." : "Criar Treinamento"}
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isSubmitting || isUploading}
+      >
+        {isSubmitting || isUploading ? "Processando..." : "Criar e Continuar"}
       </Button>
     </form>
-  );
+  )
 }
