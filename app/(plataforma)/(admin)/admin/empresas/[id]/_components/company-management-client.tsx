@@ -14,7 +14,7 @@ import { useCompanyManagement } from "@/hooks/companies/use-company-management"
 export function CompanyManagementClient() {
   const params = useParams()
   const router = useRouter()
-  const empresaId = params.id as string
+  const empresaId = Number(params.id)
   
   const { 
     company, 
@@ -23,7 +23,7 @@ export function CompanyManagementClient() {
     search, 
     setSearch, 
     stats 
-  } = useCompanyManagement(empresaId)
+  } = useCompanyManagement(JSON.stringify(empresaId))
 
   if (isLoading) return (
     <div className="flex h-[60vh] flex-col items-center justify-center gap-4 font-black tracking-widest text-primary uppercase">
@@ -89,7 +89,7 @@ export function CompanyManagementClient() {
 
       {/* CREATE SECTION */}
       <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <CollaboratorCreate empresaId={empresaId} />
+        <CollaboratorCreate empresaId={JSON.stringify(empresaId)} />
       </section>
 
       {/* FILTERS & LIST */}

@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { AlertTriangle, Loader2, Copy, Check } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -10,18 +9,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CertificateTemplate } from "@/types/database/template"
-import { cn } from "@/lib/utils"
+import { AlertTriangle, Check, Copy, Loader2 } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface DeleteTemplateModalProps {
   template: CertificateTemplate | null
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: (id: number, pdf: string, capa: string | null) => void
-  isProcessing: boolean 
+  isProcessing: boolean
 }
 
 export function DeleteTemplateModal({
@@ -37,6 +36,7 @@ export function DeleteTemplateModal({
   // Limpa o estado quando o modal fecha
   useEffect(() => {
     if (!open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setConfirmName("")
       setCopied(false)
     }
@@ -48,7 +48,7 @@ export function DeleteTemplateModal({
     navigator.clipboard.writeText(template.titulo)
     setCopied(true)
     // Opcional: cola automaticamente no input para agilizar
-    setConfirmName(template.titulo) 
+    setConfirmName(template.titulo)
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -65,24 +65,26 @@ export function DeleteTemplateModal({
       open={open}
       onOpenChange={(val) => !isProcessing && onOpenChange(val)}
     >
-      <DialogContent className="max-w-112.5 sm:rounded-lg border-border bg-card/95 backdrop-blur-xl shadow-lg">
+      <DialogContent className="border-border bg-card/95 max-w-112.5 shadow-lg backdrop-blur-xl sm:rounded-lg">
         <DialogHeader>
-          <div className="flex items-center gap-3 text-destructive mb-1">
+          <div className="text-destructive mb-1 flex items-center gap-3">
             <AlertTriangle className="h-6 w-6" />
             <DialogTitle className="text-xl font-bold tracking-tight">
               Confirmar Exclusão
             </DialogTitle>
           </div>
           <DialogDescription className="text-sm">
-            Esta ação pode ser irreversível. Se o template estiver em uso, ele será apenas <span className="font-semibold text-foreground">desativado</span>.
+            Esta ação pode ser irreversível. Se o template estiver em uso, ele
+            será apenas{" "}
+            <span className="text-foreground font-semibold">desativado</span>.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {/* Box de Nome com Botão Copiar */}
-          <div className="rounded-md bg-muted/50 p-4 border border-border space-y-2 relative group">
+          <div className="bg-muted/50 border-border group relative space-y-2 rounded-md border p-4">
             <div className="flex items-center justify-between">
-              <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <Label className="text-muted-foreground text-[10px] font-bold tracking-wider uppercase">
                 Nome do Template
               </Label>
               <Button
@@ -90,19 +92,26 @@ export function DeleteTemplateModal({
                 variant="ghost"
                 size="icon"
                 onClick={handleCopy}
-                className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary h-6 w-6 transition-colors"
                 title="Copiar nome"
               >
-                {copied ? <Check size={12} className="text-green-600" /> : <Copy size={12} />}
+                {copied ? (
+                  <Check size={12} className="text-green-600" />
+                ) : (
+                  <Copy size={12} />
+                )}
               </Button>
             </div>
-            <p className="text-lg font-semibold text-foreground select-none break-all leading-tight">
+            <p className="text-foreground text-lg leading-tight font-semibold break-all select-none">
               {template?.titulo}
             </p>
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="confirm-delete" className="text-xs font-medium text-muted-foreground">
+            <Label
+              htmlFor="confirm-delete"
+              className="text-muted-foreground text-xs font-medium"
+            >
               Para confirmar, digite ou cole o nome acima:
             </Label>
             <Input
@@ -117,9 +126,9 @@ export function DeleteTemplateModal({
           </div>
         </div>
 
-        <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
-          <Button 
-            variant="outline" 
+        <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row">
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isProcessing}
             className="flex-1 sm:flex-none"
@@ -130,7 +139,7 @@ export function DeleteTemplateModal({
             variant="destructive"
             onClick={handleConfirm}
             disabled={isButtonDisabled}
-            className="flex-1 sm:flex-none min-w-35"
+            className="min-w-35 flex-1 sm:flex-none"
           >
             {isProcessing ? (
               <>
