@@ -25,7 +25,7 @@ export function Breadcrumbs() {
             {index !== items.length - 1 && (
               <BreadcrumbItem className="hidden md:block">
                 {/* Adicionei o href aqui para o link funcionar, caso seu hook retorne link */}
-                <BreadcrumbLink href={item.link || "#"}>{item.title}</BreadcrumbLink>
+                <BreadcrumbLink>{item.title}</BreadcrumbLink>
               </BreadcrumbItem>
             )}
             {index < items.length - 1 && (

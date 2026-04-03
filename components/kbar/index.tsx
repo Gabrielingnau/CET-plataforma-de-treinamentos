@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
- 
-import { data } from '@/navigation/const-data';
+
+import { data as navigationData } from '@/navigation/const-data';
+import { useAuth } from "@/hooks/auth/use-auth";
+import { UserRole } from "@/types/database/users";
 import {
   KBarAnimator,
   KBarPortal,
@@ -15,44 +17,55 @@ import { RenderResults } from './render-result';
 
 export function KBar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { user } = useAuth();
+
+  // 1. Identifica a Role do usuário (padrão colaborador)
+  const userRole: UserRole = user?.role ?? "colaborador";
 
   const navigateTo = (url: string) => {
     router.push(url);
   };
 
-  // These action are for the navigation
-  const actions = useMemo(
-    () =>
-      data.flatMap((navItem) => {
-        // Only include base action if the navItem has a real URL and is not just a container
-        const baseAction =
-          navItem.url !== '#'
-            ? {
-                id: `${navItem.title.toLowerCase()}Action`,
-                name: navItem.title,
-                keywords: navItem.title.toLowerCase(),
-                section: 'Navigation',
-                subtitle: `Go to ${navItem.title}`,
-                perform: () => navigateTo(navItem.url),
-              }
-            : null;
+  // 2. Filtra as ações baseado nas permissões (Roles e hideFromRoles)
+  const actions = useMemo(() => {
+    return navigationData.flatMap((navItem) => {
+      // Verifica se o grupo pai é permitido
+      const groupHasAccess = navItem.roles?.includes(userRole);
+      const groupIsHidden = navItem.hideFromRoles?.includes(userRole);
 
-        // Map child items into actions
-        const childActions =
-          navItem.items?.map((childItem) => ({
-            id: `${childItem.title.toLowerCase()}Action`,
-            name: childItem.title,
-            keywords: childItem.title.toLowerCase(),
-            section: navItem.title,
-            subtitle: `Go to ${childItem.title}`,
-            perform: () => navigateTo(childItem.url),
-          })) ?? [];
+      // Se o grupo pai for escondido ou não tiver acesso, ignoramos ele e os filhos
+      if (groupIsHidden || !groupHasAccess) return [];
 
-        // Return only valid actions (ignoring null base actions for containers)
-        return baseAction ? [baseAction, ...childActions] : childActions;
-      }),
-    []
-  );
+      // Filtra os itens internos (filhos)
+      const filteredChildren = navItem.items?.filter((child) => {
+        const hasAccess = child.roles?.includes(userRole);
+        const isHidden = child.hideFromRoles?.includes(userRole);
+        return hasAccess && !isHidden;
+      }) ?? [];
+
+      // Cria a ação do item pai (se ele tiver uma URL válida e não for apenas container)
+      const baseAction = navItem.url !== '#' ? [{
+        id: `${navItem.title.toLowerCase()}Action`,
+        name: navItem.title,
+        keywords: navItem.title.toLowerCase(),
+        section: 'Navegação Principal',
+        subtitle: `Ir para ${navItem.title}`,
+        perform: () => navigateTo(navItem.url),
+      }] : [];
+
+      // Mapeia os filhos permitidos para o formato da KBar
+      const childActions = filteredChildren.map((childItem) => ({
+        id: `${childItem.title.toLowerCase()}Action`,
+        name: childItem.title,
+        keywords: childItem.title.toLowerCase(),
+        section: navItem.title, // Agrupa pela seção do Pai
+        subtitle: `Ir para ${childItem.title}`,
+        perform: () => navigateTo(childItem.url),
+      }));
+
+      return [...baseAction, ...childActions];
+    });
+  }, [userRole, navigationData]);
 
   return (
     <KBarProvider actions={actions}>
@@ -60,15 +73,19 @@ export function KBar({ children }: { children: React.ReactNode }) {
     </KBarProvider>
   );
 }
+
 const KBarComponent = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <KBarPortal>
-        <KBarPositioner className="scrollbar-hide fixed inset-0 z-[99999] bg-black/80 !p-0 backdrop-blur-sm">
-          <KBarAnimator className="relative !mt-44 w-full max-w-[600px] !-translate-y-12 overflow-hidden rounded-lg border bg-background text-foreground shadow-lg">
+        <KBarPositioner className="scrollbar-hide z-9999 bg-black/40 p-0 backdrop-blur-sm">
+          <KBarAnimator className="relative mt-[5vh] w-full max-w-150 -translate-y-12 overflow-hidden rounded-xl border bg-background text-foreground shadow-2xl">
             <div className="bg-background">
-              <div className="border-x-0 border-b-2">
-                <KBarSearch className="w-full border-none bg-background px-6 py-4 text-lg outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 " />
+              <div className="border-b">
+                <KBarSearch 
+                  placeholder="Pesquisar rotas e ferramentas..."
+                  className="w-full border-none bg-background px-6 py-4 text-lg outline-none focus:ring-0" 
+                />
               </div>
               <RenderResults />
             </div>

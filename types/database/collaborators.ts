@@ -1,9 +1,16 @@
 export interface Collaborator {
-  id: number
-  created_at: string
-  updated_at: string | null
-  nome: string
-  email: string
-  empresa_id: number
-  cargo: string
+  id: string; // UUID do Auth
+  nome: string;
+  email: string;
+  cpf: string;
+  empresa_id: number;
+  funcao: "COLABORADOR";
+  created_at: string;
+}
+
+export interface CreateCollaboratorPayload {
+  nome: string;
+  cpf: string;
+  empresa_id: number;
+  email_empresa: string; // Necessário para gerar o e-mail automático
 }

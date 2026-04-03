@@ -1,5 +1,5 @@
 {
-  "name": "CET",
+  "name": "kydora",
   "version": "0.0.1",
   "type": "module",
   "private": true,
@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",
@@ -20,6 +21,9 @@
     "axios": "1.13.6",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "cpf-cnpj-validator": "1.0.3",
+    "date-fns": "4.1.0",
+    "framer-motion": "12.38.0",
     "kbar": "0.1.0-beta.48",
     "lucide-react": "0.577.0",
     "next": "16.1.6",
@@ -28,8 +32,10 @@
     "pdf-lib": "1.17.1",
     "radix-ui": "1.4.3",
     "react": "^19.2.4",
+    "react-day-picker": "9.14.0",
     "react-dom": "^19.2.4",
     "react-hook-form": "7.71.2",
+    "recharts": "3.8.1",
     "shadcn": "4.0.2",
     "sonner": "2.0.7",
     "tailwind-merge": "3.5.0",
@@ -45,11 +51,19 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.6",
+    "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-unused-imports": "4.4.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
     "postcss": "^8",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx,js,jsx,css}": [
+      "prettier --write"
+    ]
   }
 }

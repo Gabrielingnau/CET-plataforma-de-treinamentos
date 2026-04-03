@@ -2,6 +2,7 @@ import { defineConfig, globalIgnores } from "eslint/config"
 import nextVitals from "eslint-config-next/core-web-vitals"
 import nextTs from "eslint-config-next/typescript"
 import unusedImports from "eslint-plugin-unused-imports"
+import eslintConfigPrettier from "eslint-config-prettier" // Adicione isso
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -24,9 +25,10 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
-  // Override default ignores of eslint-config-next.
+  // O Prettier deve ser SEMPRE o último para sobrescrever regras de estilo
+  eslintConfigPrettier, 
+  
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",

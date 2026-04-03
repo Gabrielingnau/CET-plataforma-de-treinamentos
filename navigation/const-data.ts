@@ -1,65 +1,92 @@
 import { NavItem } from "@/types/navigation/nav-item.type"
+import { LayoutDashboard, GraduationCap, Users, FileCheck } from "lucide-react"
 
 export const data: NavItem[] = [
   {
     title: "Painel de Controle",
-    url: "/painel",
+    url: "/admin/painel",
+    icon: LayoutDashboard,
     roles: ["admin", "empresa"],
     items: [
       {
         title: "Administrador",
-        url: "/painel/administrador",
+        url: "/admin/painel",
         roles: ["admin"],
       },
       {
         title: "Empresa",
-        url: "/painel/empresa",
-        roles: ["admin", "empresa"],
+        url: "/empresa/painel",
+        roles: ["empresa"],
       },
     ],
   },
   {
     title: "Treinamentos",
-    url: "/treinamentos",
+    url: "/admin/treinamentos",
+    icon: GraduationCap,
     roles: ["admin", "empresa", "colaborador"],
     items: [
       {
         title: "Novo +",
-        url: "/treinamentos/novo",
+        url: "/admin/treinamentos/novo",
         roles: ["admin"],
       },
       {
-        title: "Visualizar",
-        url: "/treinamentos/visualizar",
-        roles: ["admin", "empresa", "colaborador"],
+        title: "Gerenciar",
+        url: "/admin/treinamentos/gerenciar",
+        roles: ["admin"],
+      },
+      {
+        title: "Catálogo",
+        url: "/empresa/treinamentos/catalogo",
+        roles: ["empresa"],
+      },
+      {
+        title: "Meus Treinamentos",
+        url: "/empresa/treinamentos/meus-treinamentos",
+        roles: ["empresa", "admin"],
+        hideFromRoles: ["admin"],
+      },
+      {
+        title: "Meus Treinamentos",
+        url: "/colaborador/treinamentos/meus-treinamentos",
+        roles: ["colaborador", "admin"],
+        hideFromRoles: ["admin"],
       },
     ],
   },
   {
-    title: "Clientes",
-    url: "/clientes",
+    title: "Empresas",
+    url: "/admin/empresas",
+    icon: Users,
     roles: ["admin"],
     items: [
       {
-        title: "Novo",
-        url: "/clientes/novo",
+        title: "Nova Empresa +",
+        url: "/admin/empresas/novo",
         roles: ["admin"],
       },
       {
-        title: "Listar",
-        url: "/clientes/listar",
+        title: "Novo Gestor +",
+        url: "/admin/empresas/gestor",
+        roles: ["admin"],
+      },
+      {
+        title: "Gerenciar",
+        url: "/admin/empresas/gerenciar",
         roles: ["admin"],
       },
     ],
   },
   {
     title: "Certificados",
-    url: "/certificados",
+    url: "/admin/certificados",
+    icon: FileCheck,
     roles: ["admin"],
     items: [
       {
         title: "Templates",
-        url: "/certificados/templates",
+        url: "/admin/certificados/templates",
         roles: ["admin"],
       },
     ],

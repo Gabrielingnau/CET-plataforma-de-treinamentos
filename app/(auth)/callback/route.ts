@@ -5,23 +5,29 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get("code")
   
-  // O link do seu email tem ?next=/resetar-senha
+  // Define para onde ir após o login (Padrão: /resetar-senha para e-mails de recuperação)
   const next = searchParams.get("next") ?? "/resetar-senha"
 
   if (code) {
     const supabase = await createClient()
 
-    // O PKCE troca o código pela sessão aqui no servidor
+    // Troca o código PKCE pela sessão real
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
-      // Com a sessão trocada, o usuário agora está logado
-      return NextResponse.redirect(`${origin}${next}`)
+      const redirectUrl = new URL(next, origin)
+      
+      // Se o destino for resetar-senha, avisamos o middleware que é uma recuperação
+      if (next === "/resetar-senha") {
+        redirectUrl.searchParams.set("type", "recovery")
+      }
+      
+      return NextResponse.redirect(redirectUrl.toString())
     }
     
-    console.error("Erro PKCE:", error.message)
+    console.error("Erro no Callback Auth:", error.message)
   }
 
-  // Se falhar, volta para o login
+  // Em caso de erro, volta para o login com um parâmetro de erro
   return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`)
 }

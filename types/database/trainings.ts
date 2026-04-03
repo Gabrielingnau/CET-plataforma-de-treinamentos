@@ -1,58 +1,62 @@
-// types/training.ts
+import { CertificateTemplate } from "./certificates"
+import { Lesson } from "./lessons"
+import { Module } from "./modules"
+import { User } from "./users" // Importando o type de user que você mandou
 
-import { Lesson } from "./lessons";
-import { Module } from "./modules";
-
-/**
- * 1. ENTIDADE COMPLETA (GET)
- * O que o banco retorna. Aqui todos os campos são obrigatórios ou 
- * seguem a estrutura exata da tabela.
- */
 export interface Training {
-  id: string; // ou number, dependendo do seu banco
-  created_at: string;
-  updated_at: string | null;
-  titulo: string;
-  descricao: string;
-  cover_url: string;
-  carga_horaria: string;
-  pontuacao_aprovacao: number;
-  max_exam_tentativas: number;
-  empresa_id: number;
-  criado_por: string;
+  id: number
+  created_at: string
+  updated_at: string | null
+  titulo: string
+  descricao: string
+  cover_url: string
+  carga_horaria: number
+  pontuacao_aprovacao: number
+  max_exam_tentativas: number
+  template_id: number | null
+  empresa_id: number
+  criado_por: string
 }
 
-/**
- * 2. PAYLOAD DE CRIAÇÃO (POST)
- * O que enviamos para o banco. Não enviamos 'id' nem 'created_at', 
- * pois o banco gera sozinho.
- */
 export interface CreateTrainingPayload {
-  titulo: string;
-  descricao: string;
-  cover_url: string;
-  carga_horaria: string;
-  pontuacao_aprovacao: number;
-  max_exam_tentativas: number;
-  criado_por: string; // Vem do seu AuthContext
-  empresa_id?: number; // Opcional se for injetado no backend
+  titulo: string
+  descricao: string
+  cover_url: string
+  carga_horaria: number
+  pontuacao_aprovacao: number
+  max_exam_tentativas: number
+  template_id: number | null
+  criado_por: string
+  empresa_id?: number
 }
 
 /**
- * 3. PAYLOAD DE ATUALIZAÇÃO (PUT/PATCH)
- * Todos os campos de criação, mas opcionais (Partial), 
- * pois você pode querer editar apenas o título, por exemplo.
+ * Interface específica para a listagem da View (getTrainingsList).
+ * Usa os nomes (aliases) definidos na query do Supabase.
  */
-export interface UpdateTrainingPayload extends Partial<CreateTrainingPayload> {
-  // Opcional: campos que só existem na edição se houver necessidade
+export interface TrainingWithDetails extends Training {
+  // O alias 'criador' retorna apenas o nome conforme sua query
+  criador: Pick<User, "nome"> | null
+
+  // O alias 'certificate_template'
+  certificate_template: Pick<
+    CertificateTemplate,
+    "id" | "titulo" | "capa_url"
+  > | null
+
+  // O alias 'modules' que contém as aulas (lessons)
+  modules: {
+    id: number
+    lessons: {
+      id: number
+    }[]
+  }[]
 }
 
-/**
- * 4. INTERFACE PARA RELAÇÕES (JOIN)
- * Usado na sua página de "Visualizar", onde você traz o treinamento + módulos
- */
-export interface TrainingWithRelations extends Training {
-  modulos: Array<Module & {
-    aulas: Lesson[];
-  }>;
+// Mantendo sua estrutura antiga para compatibilidade se necessário
+export interface FullTrainingStructure extends Training {
+  certificate_templates: CertificateTemplate | null
+  modulos: (Module & {
+    aulas: Lesson[]
+  })[]
 }

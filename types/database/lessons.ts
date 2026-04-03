@@ -1,5 +1,7 @@
 // types/lesson.ts
 
+import { ModuleData } from "./modules";
+
 export interface Lesson {
   id: number;
   module_id: number;
@@ -21,6 +23,14 @@ export interface CreateLessonPayload {
   texto_video: string;
   duracao_min: number;
   ordem: number;
+}
+
+export interface LessonData {
+  id: number;
+  titulo: string;
+  descricao: string;
+  video_url: string;
+  modulo: ModuleData;
 }
 
 export interface UpdateLessonPayload extends Partial<CreateLessonPayload> {}

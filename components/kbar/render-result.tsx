@@ -10,7 +10,7 @@ export function RenderResults() {
       items={results}
       onRender={({ item, active }) =>
         typeof item === 'string' ? (
-          <div className="px-4 py-2 text-sm uppercase text-primary-foreground opacity-40 text-black">
+          <div className="px-4 py-2 text-sm uppercase opacity-40 text-black">
             {item}
           </div>
         ) : (
