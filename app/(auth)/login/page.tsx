@@ -1,6 +1,6 @@
 "use client"
 
-import { Eye, EyeOff, AlertCircle, ShieldCheck } from "lucide-react"
+import { Eye, EyeOff, AlertCircle, ShieldCheck, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useLogin } from "@/hooks/auth/use-login"
 import { Input } from "@/components/ui/input"
@@ -11,7 +11,7 @@ export default function LoginPage() {
   const { 
     form: { register, formState: { errors } }, 
     onSubmit, 
-    isPending, 
+    isPending, // Esse agora reflete tanto a autenticação quanto o redirecionamento
     authError, 
     showPassword, 
     togglePassword, 
@@ -20,7 +20,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-md mx-auto space-y-8 p-4">
-      {/* Cabeçalho - Usando 'primary' para o ícone e cores semânticas */}
+      {/* Cabeçalho */}
       <div className="flex flex-col items-center space-y-3 text-center">
         <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20">
           <ShieldCheck className="w-8 h-8 text-primary-foreground" />
@@ -31,7 +31,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Alerta de Erro - Usando 'destructive' do tema */}
+      {/* Alerta de Erro */}
       {authError && (
         <div className="flex items-center gap-2 rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive animate-in fade-in zoom-in duration-200">
           <AlertCircle size={18} />
@@ -46,6 +46,7 @@ export default function LoginPage() {
           <Label htmlFor="email" className="font-semibold text-sm">E-mail</Label>
           <Input
             id="email"
+            type="email"
             placeholder="exemplo@email.com"
             {...register("email", { onChange: handleInputChange })}
             className={`h-12 rounded-xl border-input focus-visible:ring-primary ${
@@ -60,7 +61,7 @@ export default function LoginPage() {
         {/* Campo Senha */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password text-sm" className="font-semibold text-sm">Senha</Label>
+            <Label htmlFor="password" className="font-semibold text-sm">Senha</Label>
             <Link
               href="/esqueceu-senha"
               className="text-sm font-semibold text-primary hover:opacity-80 transition-opacity"
@@ -81,6 +82,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={togglePassword}
+              tabIndex={-1} // Evita que o tab pare no ícone de olho
               className="absolute top-1/2 right-4 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -91,13 +93,20 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* Botão de Login - O variant 'default' já puxa o seu laranja automaticamente */}
+        {/* Botão de Login */}
         <Button 
           type="submit"
           className="h-12 w-full font-bold rounded-xl text-md transition-all shadow-lg shadow-primary/10 active:scale-[0.98]" 
           disabled={isPending}
         >
-          {isPending ? "Autenticando..." : "Entrar na conta"}
+          {isPending ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Autenticando...</span>
+            </div>
+          ) : (
+            "Entrar na conta"
+          )}
         </Button>
       </form>
     </div>

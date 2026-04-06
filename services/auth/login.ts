@@ -8,9 +8,10 @@ export async function login(data: LoginFormData) {
   })
 
   if (error) {
-    // Lançamos o erro original para o TanStack Query capturar no onError
+    // Se der erro, para tudo aqui e joga o erro pro useMutation
     throw error
   }
 
+  // Retorna apenas o data (que contém user e session)
   return authData
 }

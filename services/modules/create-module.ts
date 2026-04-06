@@ -1,6 +1,7 @@
 // services/modules/create-module.ts
 import { supabase } from "@/lib/supabase/client" // Usar sempre o client para Mutations em forms
 import { CreateModulePayload } from "@/types/database/modules"
+
 /*
   Função para criar um novo módulo no banco de dados usando Supabase.
   Recebe um objeto do tipo CreateModulePayload e insere na tabela "modules".

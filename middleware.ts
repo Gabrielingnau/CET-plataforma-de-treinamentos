@@ -16,12 +16,10 @@ export async function middleware(req: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) {
-    // Evita loop se já estiver no login
-    if (path === "/login") return NextResponse.next()
     return NextResponse.redirect(new URL("/login", req.url))
   }
 
-  // 3. BUSCA DE PERFIL
+  // 3. BUSCA DE PERFIL (Gargalo de performance - essencial para o RBAC)
   const { data: userProfile } = await supabase
     .from("users")
     .select("role, primeiro_login")
@@ -29,6 +27,8 @@ export async function middleware(req: NextRequest) {
     .single()
 
   if (!userProfile) {
+    // Se logou mas não tem perfil, limpa a sessão e volta pro login
+    await supabase.auth.signOut()
     return NextResponse.redirect(new URL("/login", req.url))
   }
 
@@ -38,38 +38,32 @@ export async function middleware(req: NextRequest) {
 
   // 4. LÓGICA DE REDIRECIONAMENTO PARA RESET
   if (path === "/resetar-senha") {
-    if (isPrimeiroLogin || isRecoveryMode) {
-      return NextResponse.next()
-    }
+    if (isPrimeiroLogin || isRecoveryMode) return NextResponse.next()
     return NextResponse.redirect(new URL("/", req.url))
   }
 
-  // Se o usuário PRECISA resetar mas está em outra rota
   if (isPrimeiroLogin && (role === "colaborador" || role === "empresa")) {
     if (path !== "/resetar-senha") {
       return NextResponse.redirect(new URL("/resetar-senha", req.url))
     }
   }
 
-  // 5. REDIRECIONAMENTO INICIAL (Caso acesse a raiz "/")
+  // 5. REDIRECIONAMENTO INICIAL (Otimizado)
   if (path === "/") {
-    if (role === "admin") {
-      return NextResponse.redirect(new URL("/admin/painel", req.url))
+    const redirects: Record<string, string> = {
+      admin: "/admin/painel",
+      empresa: "/empresa/painel",
+      colaborador: "/colaborador/treinamentos/meus-treinamentos",
     }
-    if (role === "empresa") {
-      return NextResponse.redirect(new URL("/empresa/painel", req.url))
-    }
-    if (role === "colaborador") {
-      return NextResponse.redirect(new URL("/colaborador/treinamentos/meus-treinamentos", req.url))
-    }
+    const destination = redirects[role] || "/unauthorized"
+    return NextResponse.redirect(new URL(destination, req.url))
   }
 
-  // 6. FILTRO DE ACESSO (RBAC) baseado no navigationData
-  const allRoutes = navigationData.flatMap((group) => [
-    ...(group.items ?? []).map((item) => ({ url: item.url, roles: item.roles })),
-  ])
+  // 6. FILTRO DE ACESSO (RBAC)
+  const allRoutes = navigationData.flatMap((group) => 
+    (group.items ?? []).map((item) => ({ url: item.url, roles: item.roles }))
+  )
 
-  // Verifica se a rota atual exige uma role específica
   const matchedRoute = allRoutes.find((route) => route.url !== "#" && path.startsWith(route.url))
 
   if (matchedRoute && !matchedRoute.roles?.includes(role)) {
@@ -80,5 +74,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 }
