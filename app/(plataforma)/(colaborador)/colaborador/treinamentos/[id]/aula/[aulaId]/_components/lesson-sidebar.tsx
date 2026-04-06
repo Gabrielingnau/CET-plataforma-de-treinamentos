@@ -26,7 +26,7 @@ export function LessonSidebar({
   const allLessonsCompleted = isAdmin || completedCount === lessons.length
 
   return (
-    <aside className="flex w-full shrink-0 flex-col border-border bg-card lg:h-[75vh] lg:w-80 lg:border-l xl:w-[380px]">
+    <aside className="flex w-full shrink-0 flex-col border-border bg-card lg:h-[80vh] lg:w-80 lg:border-l xl:w-[380px]">
       <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-card/80 p-6 backdrop-blur-sm">
         <div className="flex flex-col">
           <h3 className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">

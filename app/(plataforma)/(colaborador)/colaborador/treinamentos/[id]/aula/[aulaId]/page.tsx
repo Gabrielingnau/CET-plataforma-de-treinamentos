@@ -38,7 +38,7 @@ export default function LessonPlayerPage({ params }: { params: Promise<{ id: str
   )
 
   return (
-    <div className="flex flex-col bg-background lg:h-screen lg:overflow-hidden">
+    <div className="flex flex-col bg-background lg:overflow-hidden">
       <LessonHeader
         trainingId={trainingId}
         moduleTitle={currentModule?.titulo}
@@ -46,8 +46,8 @@ export default function LessonPlayerPage({ params }: { params: Promise<{ id: str
         isAdmin={isAdmin}
       />
 
-      <div className="flex flex-1 flex-col lg:flex-row lg:overflow-hidden">
-        <main className="custom-scrollbar flex-1 bg-black lg:overflow-y-auto lg:bg-background">
+      <div className="flex flex-col lg:flex-row lg:overflow-hidden">
+        <main className="custom-scrollbar bg-black lg:overflow-y-auto lg:bg-background max-h-[80vh]">
           {/* VIDEO CONTAINER */}
           <div className="sticky top-16 z-10 aspect-video w-full bg-black lg:relative lg:top-0">
             {lesson?.video_url && (

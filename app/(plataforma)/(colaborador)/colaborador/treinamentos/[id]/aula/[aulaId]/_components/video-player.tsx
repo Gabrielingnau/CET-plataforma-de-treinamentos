@@ -28,7 +28,7 @@ export function VideoPlayer({
   const [showOverlay, setShowOverlay] = useState(false)
 
   return (
-    <div className="relative w-full h-full bg-black group overflow-hidden rounded-xl">
+    <div className="relative w-full bg-black group overflow-hidden rounded-xl">
       <video 
         key={videoUrl}
         src={videoUrl} 
