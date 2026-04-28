@@ -125,7 +125,7 @@ export const studentService = {
       .eq("training_id", trainingId);
   },
 
-  // 2. FORÇAR APROVAÇÃO FINAL (Concluir Curso)
+  // 2. FORÇAR APROVAÇÃO FINAL (Concluir Treinamento)
   async overridePassExam(userId: string, trainingId: number) {
     const { error: examErr } = await supabase
       .from("exam_attempts")

@@ -21,6 +21,9 @@ export function TemplatesView() {
     isProcessing
   } = useTemplates()
 
+  // Define se o usuário está aplicando algum filtro ativamente
+  const isFiltering = search.length > 0 || filterStatus !== "todos"
+
   if (isLoading) {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-4">
@@ -87,7 +90,11 @@ export function TemplatesView() {
       </div>
 
       {/* Grid de Conteúdo */}
-      {filtered.length > 0 ? (
+      {/* LÓGICA ALTERADA: 
+          Mostra o Grid se houver itens OU se o usuário NÃO estiver filtrando (caso do banco vazio).
+          O TemplateGrid por padrão já renderiza o botão "Novo Template".
+      */}
+      {filtered.length > 0 || !isFiltering ? (
         <TemplateGrid 
           initialTemplates={filtered} 
           onToggleStatus={toggleStatus}
@@ -95,6 +102,7 @@ export function TemplatesView() {
           isProcessing={isProcessing}
         />
       ) : (
+        /* Só cai aqui se houver filtros ativos e nenhum resultado */
         <div className="h-80 flex flex-col items-center justify-center border-2 border-dashed rounded-lg border-muted-foreground/20 text-muted-foreground gap-4 bg-muted/5">
           <div className="rounded-full bg-muted/20 p-4">
             <Filter size={32} className="opacity-30" />
@@ -105,15 +113,13 @@ export function TemplatesView() {
               Ajuste seus filtros ou o termo de busca para encontrar o que precisa.
             </p>
           </div>
-          {(search || filterStatus !== "todos") && (
-            <Button 
-              variant="link" 
-              onClick={() => { setSearch(""); setFilterStatus("todos"); }}
-              className="text-primary font-semibold"
-            >
-              Limpar todos os filtros
-            </Button>
-          )}
+          <Button 
+            variant="link" 
+            onClick={() => { setSearch(""); setFilterStatus("todos"); }}
+            className="text-primary font-semibold"
+          >
+            Limpar todos os filtros
+          </Button>
         </div>
       )}
     </div>
@@ -145,8 +151,6 @@ function FilterButton({ active, onClick, icon, label, activeClass = "bg-backgrou
     >
       {icon} 
       <span className="hidden sm:inline">{label}</span>
-      {/* Exibe o label no mobile apenas se estiver ativo para economizar espaço se necessário, 
-          ou mantém sempre se couber bem como aqui. */}
     </Button>
   )
 }

@@ -37,7 +37,7 @@ export default function NovoResponsavelPage() {
             Vincular <span className="text-primary">Responsável</span>
           </h1>
           <p className="mx-auto max-w-md font-medium text-muted-foreground">
-            Crie as credenciais de acesso para o gestor de uma instituição parceira.
+            Crie as credenciais de acesso para o gestor de uma empresa parceira.
           </p>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function NovoResponsavelPage() {
               <div className="flex items-center gap-3 border-b pb-4">
                 <Building2 className="text-primary" size={20} />
                 <span className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
-                  Selecionar Instituição
+                  Selecionar Empresa
                 </span>
               </div>
 

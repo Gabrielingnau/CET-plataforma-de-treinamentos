@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+
 import { getCompanyDetails } from "@/services/companies/get-company-details"
+import { useQuery } from "@tanstack/react-query"
 
 export function useCompanyManagement(empresaId: string) {
   const [search, setSearch] = useState("")
 
   const { data: company, isLoading } = useQuery({
-    queryKey: ["company-details", empresaId],
+    queryKey: ["company-details"],
     queryFn: () => getCompanyDetails(empresaId),
     enabled: !!empresaId,
     staleTime: 1000 * 60 * 5, // 5 minutos de cache "fresco"
@@ -14,17 +15,21 @@ export function useCompanyManagement(empresaId: string) {
 
   // OTIMIZAÇÃO: Filtro memoizado e normalizado
   const filteredUsers = useMemo(() => {
-    if (!company?.colaboradores) return []
+    // Extraímos a lista aqui para garantir que a dependência seja clara
+    const colaboradores = company?.colaboradores; 
+    
+    if (!colaboradores) return []
     
     const searchTerm = search.toLowerCase().trim()
-    if (!searchTerm) return company.colaboradores
+    if (!searchTerm) return colaboradores
 
-    return company.colaboradores.filter((user: any) => {
+    return colaboradores.filter((user: any) => {
       const nameMatch = user.nome?.toLowerCase().includes(searchTerm)
       const cpfMatch = user.cpf?.replace(/\D/g, "").includes(searchTerm.replace(/\D/g, ""))
       return nameMatch || cpfMatch
     })
-  }, [company?.colaboradores, search])
+    // Adicionamos 'company' como dependência para satisfazer a inferência do compilador
+  }, [company, search])
 
   const stats = {
     totalUsers: filteredUsers.length,

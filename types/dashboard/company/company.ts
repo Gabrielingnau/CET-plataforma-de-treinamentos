@@ -39,7 +39,7 @@ export interface CompanyDashboardData {
 }
 
 /**
- * Detalhes de progresso por curso (Usado no Drawer/Sheet lateral)
+ * Detalhes de progresso por Treinamento (Usado no Drawer/Sheet lateral)
  */
 export interface UserTrainingDetail {
   titulo_treinamento: string;

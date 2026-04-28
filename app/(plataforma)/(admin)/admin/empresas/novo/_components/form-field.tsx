@@ -29,7 +29,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
             ref={ref} 
             {...props} 
             className={cn(
-              "h-12 rounded-xl font-bold uppercase italic focus-visible:ring-primary/20",
+              "h-12 rounded-xl font-bold italic focus-visible:ring-primary/20",
               error && "border-destructive/50 focus-visible:ring-destructive/20",
               className
             )}

@@ -95,7 +95,7 @@ export function CompanyTable() {
                 <TableHeader className="bg-muted/30 sticky top-0 z-10 backdrop-blur-md">
                   <TableRow className="border-b hover:bg-transparent">
                     <TableHead className="text-muted-foreground px-6 py-4 text-[10px] font-black tracking-widest uppercase">
-                      Instituição
+                      Empresa
                     </TableHead>
                     <TableHead className="text-muted-foreground text-left text-[10px] font-black tracking-widest uppercase">
                       Gestão / Responsáveis

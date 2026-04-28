@@ -7,6 +7,7 @@ import {
   Image as ImageIcon,
   FileCheck,
   Loader2,
+  CheckCircle2, // Importado para o feedback visual de sucesso
 } from "lucide-react"
 import {
   Dialog,
@@ -88,7 +89,7 @@ export function CreateTemplateModal({
             </div>
           </aside>
 
-          {/* Área Principal com ScrollArea corrigido */}
+          {/* Área Principal */}
           <main className="flex-1 flex flex-col bg-background/40 sm:overflow-hidden overflow-auto">
             <ScrollArea className="sm:h-[57vh]">
               <div className="p-8 pb-12 max-w-2xl mx-auto">
@@ -125,7 +126,7 @@ export function CreateTemplateModal({
                       <input type="file" accept="image/*" className="hidden" {...form.register("capa_imagem")} />
                       {selectedCapa?.[0] ? (
                         <div className="flex flex-col items-center gap-1 text-primary text-center px-4">
-                          <FileCheck className="w-6 h-6" />
+                          <CheckCircle2 className="w-6 h-6 text-primary" />
                           <span className="text-xs font-bold truncate w-full">{selectedCapa[0].name}</span>
                         </div>
                       ) : (
@@ -140,27 +141,52 @@ export function CreateTemplateModal({
                   <div className="space-y-3">
                     <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Arquivo PDF</Label>
                     <label className={cn(
-                      "flex flex-col items-center justify-center h-48 rounded-xl border-2 border-dashed transition-all cursor-pointer",
-                      validation?.isValid ? "border-green-500 bg-green-50/30" : "border-border hover:bg-muted/50"
+                      "flex flex-col items-center justify-center h-48 rounded-xl border-2 border-dashed transition-all cursor-pointer relative overflow-hidden",
+                      validation?.isValid 
+                        ? "border-green-500 bg-green-500/5 ring-4 ring-green-500/10" 
+                        : "border-border hover:bg-muted/50",
+                      selectedPdf?.[0] && !validation?.isValid && "border-destructive bg-destructive/5"
                     )}>
                       <input 
                         type="file" 
                         accept=".pdf" 
                         className="hidden" 
-                        {...form.register("arquivo_pdf", { onChange: handlePdfChange })} 
+                        {...form.register("arquivo_pdf", { 
+                          onChange: (e) => {
+                            handlePdfChange(e);
+                          } 
+                        })} 
                       />
+                      
                       {validation?.isValid ? (
-                        <div className="flex flex-col items-center gap-2 text-green-600 text-center px-4">
-                          <FileCheck className="w-10 h-10" />
-                          <span className="text-xs font-bold w-full">{selectedPdf?.[0]?.name}</span>
+                        <div className="flex flex-col items-center gap-3 text-green-600 animate-in zoom-in-95 duration-300">
+                          <div className="p-3 bg-green-100 rounded-full">
+                            <FileCheck className="w-10 h-10" />
+                          </div>
+                          <div className="text-center px-4">
+                            <span className="text-xs font-bold block truncate max-w-[250px]">
+                              {selectedPdf?.[0]?.name}
+                            </span>
+                            <span className="text-[10px] uppercase font-bold opacity-70">Arquivo Pronto</span>
+                          </div>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center gap-3 text-muted-foreground text-center px-4">
-                          <Upload className="w-8 h-8" />
-                          <span className="text-[10px] font-bold uppercase tracking-widest">Clique para subir o PDF</span>
+                          <Upload className="w-8 h-8 opacity-40" />
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-bold uppercase tracking-widest block">Clique para subir o PDF</span>
+                            <span className="text-[9px] text-muted-foreground/60">Apenas arquivos .pdf</span>
+                          </div>
                         </div>
                       )}
                     </label>
+                    
+                    {/* Exibe erro de validação do PDF se houver */}
+                    {selectedPdf?.[0] && !validation?.isValid && (
+                      <p className="text-[10px] text-destructive font-bold flex items-center gap-1 mt-1">
+                        <AlertCircle size={12} /> O PDF selecionado é inválido ou muito pesado.
+                      </p>
+                    )}
                   </div>
                 </form>
               </div>
@@ -179,7 +205,7 @@ export function CreateTemplateModal({
               <Button
                 type="submit"
                 form="tpl-form"
-                disabled={isUploading}
+                disabled={isUploading || !validation?.isValid}
                 className="min-w-40"
               >
                 {isUploading ? (

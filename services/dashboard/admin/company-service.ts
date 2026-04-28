@@ -41,7 +41,7 @@ export const companyDetailsService = {
         const passou = attemptsForThisTask.some(a => a.passou);
         
         // Se falhou e não passou ainda, verificamos a contagem (aqui o max_tentativas é genérico, 
-        // mas na Camada 3 seremos mais precisos por curso)
+        // mas na Camada 3 seremos mais precisos por Treinamento)
         return falhas > 0 && !passou;
       });
 

@@ -19,7 +19,7 @@ export function LessonSidebar({
   const { push } = useRouter()
   
   const completedCount = (completedLessons || []).filter((id: number) =>
-    lessons.some((l: any) => l.id === id)
+    lessons.some((l: { id: number }) => l.id === id)
   ).length
 
   // Se for admin, todas as aulas são consideradas "completas" para liberar o Quiz
@@ -42,7 +42,7 @@ export function LessonSidebar({
       </div>
 
       <div className="custom-scrollbar flex-1 overflow-y-auto">
-        {lessons.map((item: any, index: number) => {
+        {lessons.map((item: {id: string, titulo: string, duracao_min: string}, index: number) => {
           const isSelected = item.id === currentLessonId
           const isCompleted = completedLessons.includes(item.id)
 

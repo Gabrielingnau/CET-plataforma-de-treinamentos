@@ -56,7 +56,7 @@ export function CreateTrainingForm() {
             <div className="lg:col-span-5 space-y-6">
               <div className="space-y-3">
                 <Label className={cn("text-xs font-bold uppercase flex items-center gap-2", errors.cover_url && "text-destructive")}>
-                  <ImageIcon size={14} /> Capa do Curso
+                  <ImageIcon size={14} /> Capa do Treinamento
                 </Label>
                 <div
                   onClick={() => fileInputRef.current?.click()}

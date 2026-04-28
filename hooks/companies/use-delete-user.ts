@@ -26,7 +26,7 @@ export function useDeleteUser({ userId, empresaId, role }: UseDeleteUserProps) {
       
       // Invalida a lista da empresa para refletir a exclusão na UI
       queryClient.invalidateQueries({
-        queryKey: ["company-details", empresaId],
+        queryKey: ["company-details"],
       })
     },
     onError: () => toast.error("Erro ao tentar remover o usuário da plataforma"),

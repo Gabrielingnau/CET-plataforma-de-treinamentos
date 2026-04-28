@@ -74,7 +74,7 @@ export function UserTrainingsModal({ userData, empresaId, catalogo }: UserTraini
               <div className="space-y-1 md:pt-2">
                 <div className="flex items-center justify-center md:justify-start gap-2">
                   <span className={cn("text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] italic", theme.accent)}>
-                    Plataforma KYDORA • {isGestor ? 'Gestão de Unidade' : 'Treinamento Individual'}
+                    Plataforma KYDORA • {isGestor ? 'Gestão de Empresa' : 'Treinamento Individual'}
                   </span>
                   <Sparkles size={12} className="text-orange-500 animate-pulse" />
                 </div>

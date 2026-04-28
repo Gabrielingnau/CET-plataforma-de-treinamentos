@@ -53,7 +53,7 @@ export default function CompanyDetailsPage() {
               </h1>
             </div>
             <p className="text-[10px] font-black tracking-[0.3em] text-muted-foreground uppercase truncate">
-              CNPJ: {data?.company.cnpj} • Unidade ID: #{data?.company.id}
+              CNPJ: {data?.company.cnpj} • Empresa ID: #{data?.company.id}
             </p>
           </div>
 
@@ -154,7 +154,7 @@ export default function CompanyDetailsPage() {
                   </td>
                   <td className="px-8 py-6 text-center">
                     <span className="text-xs font-black text-muted-foreground italic">
-                      {emp.treinamentos_ativos} cursos
+                      {emp.treinamentos_ativos} treinamentos
                     </span>
                   </td>
                   <td className="px-8 py-6 text-right">

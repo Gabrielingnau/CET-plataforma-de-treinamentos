@@ -38,7 +38,7 @@ export function TrainingSelectionStep({
               "text-lg font-black uppercase italic tracking-tight", 
               acessoTotal ? "text-primary" : "text-foreground"
             )}>
-              Acesso Total Master
+              Acesso Total
             </h2>
             <p className="text-[11px] font-medium text-muted-foreground uppercase italic">
               Libera todos os treinamentos automaticamente.

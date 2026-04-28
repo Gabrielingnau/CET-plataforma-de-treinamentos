@@ -76,7 +76,7 @@ export function UserEditModal({ userData, empresaId }: UserEditModalProps) {
             </div>
             <div className="flex flex-col">
                 <span className="leading-none text-foreground">{isGestor ? "Perfil Gestor" : "Perfil Colaborador"}</span>
-                <span className="text-[10px] font-bold text-muted-foreground tracking-[0.2em] uppercase not-italic mt-1">Sincronizar Credenciais</span>
+                <span className="text-[10px] font-bold text-muted-foreground tracking-[0.2em] uppercase not-italic mt-1">Atualizar Credenciais</span>
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -140,7 +140,7 @@ export function UserEditModal({ userData, empresaId }: UserEditModalProps) {
               {isLoading ? (
                 <Loader2 className="animate-spin" size={18} />
               ) : (
-                "Sincronizar Dados"
+                "Atualizar Dados"
               )}
             </Button>
           </div>

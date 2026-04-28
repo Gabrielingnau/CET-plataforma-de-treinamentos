@@ -80,7 +80,7 @@ export function DeleteTrainingModal({
 
           <div className="space-y-2">
             <p className="text-muted-foreground ml-1 text-[11px] font-medium">
-              Confirme digitando o nome do curso:
+              Confirme digitando o nome do Treinamento:
             </p>
             <Input
               value={confirmText}

@@ -1,6 +1,6 @@
 "use client"
 
-import { Search, LayoutGrid, Clock, GraduationCap, Inbox, Loader2, RotateCcw } from "lucide-react"
+import { Search, LayoutGrid, Clock, GraduationCap, Inbox, RotateCcw } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 import { Input } from "@/components/ui/input"

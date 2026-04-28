@@ -28,13 +28,13 @@ export function CompanyManagementClient() {
   if (isLoading) return (
     <div className="flex h-[60vh] flex-col items-center justify-center gap-4 font-black tracking-widest text-primary uppercase">
       <Loader2 className="animate-spin text-orange-600" size={32} /> 
-      <span className="animate-pulse">Sincronizando Unidade...</span>
+      <span className="animate-pulse">Carregando...</span>
     </div>
   )
 
   if (!company) return (
     <div className="py-20 text-center font-black tracking-widest text-muted-foreground uppercase italic">
-      Unidade não encontrada no ecossistema.
+      Empresa não encontrada no ecossistema.
     </div>
   )
 
@@ -56,7 +56,7 @@ export function CompanyManagementClient() {
             <div className="flex items-center gap-2">
                <div className="h-1.5 w-1.5 rounded-full bg-orange-600 animate-pulse" />
                <p className="text-[9px] md:text-[10px] font-black tracking-[0.3em] text-orange-600 uppercase italic">
-                 Gestão de Unidade • KYDORA
+                 Gestão da Empresa • KYDORA
                </p>
             </div>
             <h1 className="block w-full truncate text-3xl md:text-5xl leading-none font-black tracking-tighter text-foreground uppercase italic">

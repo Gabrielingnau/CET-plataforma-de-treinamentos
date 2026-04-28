@@ -45,7 +45,7 @@ export function CollaboratorCreate({ empresaId }: { empresaId: string }) {
           {isAdding ? (
             <span className="flex items-center gap-2"><X size={14} /> Cancelar</span>
           ) : (
-            <span className="flex items-center gap-2"><UserPlus size={14} /> Novo Acesso</span>
+            <span className="flex items-center gap-2"><UserPlus size={14} /> Novo Colaborador</span>
           )}
         </Button>
       </div>
@@ -93,7 +93,7 @@ export function CollaboratorCreate({ empresaId }: { empresaId: string }) {
               ) : (
                 <span className="flex items-center gap-2">
                   <UserPlus size={16} />
-                  CRIAR CREDENCIAIS
+                  CRIAR COLABORADOR
                 </span>
               )}
             </Button>

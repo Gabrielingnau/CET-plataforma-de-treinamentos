@@ -1,30 +1,30 @@
 "use client"
 
-import { useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { useStudentDossier } from "@/hooks/dashboard/admin/use-student-dossier"
+import { cn } from "@/lib/utils"
 import {
-  ChevronLeft,
-  User,
-  History,
-  Zap,
-  RotateCcw,
-  CheckCircle,
   AlertCircle,
+  CheckCircle,
+  ChevronLeft,
+  History,
+  LayoutDashboard,
   Loader2,
+  RotateCcw,
   ShieldAlert,
   Trophy,
-  LayoutDashboard,
+  User,
+  Zap,
 } from "lucide-react"
-import { useStudentDossier } from "@/hooks/dashboard/admin/use-student-dossier"
-import { Button } from "@/components/ui/button"
+import { useParams, useRouter } from "next/navigation"
+import { useState } from "react"
 import { UnlockModuleModal } from "./_components/unlock-module-modal"
-import { cn } from "@/lib/utils"
 
 export default function StudentDossierPage() {
   const params = useParams()
   const router = useRouter()
   const { data, isLoading, isActionLoading, actions } = useStudentDossier(
-    params.id as string
+    params.id as string,
   )
 
   const [selectedTrainingModules, setSelectedTrainingModules] = useState<
@@ -33,9 +33,9 @@ export default function StudentDossierPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-background">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+      <div className="bg-background flex h-screen w-full flex-col items-center justify-center gap-4">
+        <Loader2 className="text-primary h-10 w-10 animate-spin" />
+        <p className="text-muted-foreground text-[10px] font-black tracking-widest uppercase">
           Sincronizando Dossiê...
         </p>
       </div>
@@ -43,27 +43,27 @@ export default function StudentDossierPage() {
   }
 
   return (
-    <div className="min-h-screen animate-in space-y-10 bg-background p-4 duration-500 fade-in md:p-10 text-foreground">
+    <div className="animate-in bg-background fade-in text-foreground min-h-screen space-y-10 p-4 duration-500 md:p-10">
       {/* HEADER DO ALUNO */}
-      <header className="flex flex-col justify-between gap-6 border-b border-border pb-10 md:flex-row md:items-center">
-        <div className="space-y-4 max-w-full md:max-w-2xl">
+      <header className="border-border flex flex-col justify-between gap-6 border-b pb-10 md:flex-row md:items-center">
+        <div className="max-w-full space-y-4 md:max-w-2xl">
           <Button
             variant="ghost"
             onClick={() => router.back()}
-            className="h-auto p-0 text-[10px] font-black tracking-widest text-muted-foreground uppercase italic hover:text-primary transition-colors"
+            className="text-muted-foreground hover:text-primary h-auto p-0 text-[10px] font-black tracking-widest uppercase italic transition-colors"
           >
-            <ChevronLeft className="mr-1 h-4 w-4" /> Voltar para Unidade
+            <ChevronLeft className="mr-1 h-4 w-4" /> Voltar para Empresa
           </Button>
 
           <div className="flex items-center gap-6 overflow-hidden">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] border-2 border-border bg-muted/50">
+            <div className="border-border bg-muted/50 flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] border-2">
               <User size={32} className="text-muted-foreground" />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-4xl font-black tracking-tighter uppercase italic md:text-5xl truncate">
+              <h1 className="truncate text-4xl font-black tracking-tighter uppercase italic md:text-5xl">
                 {data?.user.nome}
               </h1>
-              <p className="text-[10px] font-black tracking-[0.3em] text-primary uppercase truncate">
+              <p className="text-primary truncate text-[10px] font-black tracking-[0.3em] uppercase">
                 {data?.user.empresa_nome} • ID: {data?.user.id.slice(0, 8)}
               </p>
             </div>
@@ -71,9 +71,9 @@ export default function StudentDossierPage() {
         </div>
 
         <div className="flex gap-4">
-          <div className="min-w-[120px] rounded-3xl border border-border bg-card/50 p-4 text-center">
-            <p className="text-[8px] font-black text-muted-foreground uppercase italic">
-              Cursos Ativos
+          <div className="border-border bg-card/50 min-w-[120px] rounded-3xl border p-4 text-center">
+            <p className="text-muted-foreground text-[8px] font-black uppercase italic">
+              Treinamentos Ativos
             </p>
             <p className="text-2xl font-black italic">
               {data?.trainings.length}
@@ -91,36 +91,38 @@ export default function StudentDossierPage() {
           return (
             <div
               key={train.training_id}
-              className="group relative rounded-[3rem] border border-border bg-card/30 p-8 transition-all hover:border-primary/30"
+              className="group border-border bg-card/30 hover:border-primary/30 relative rounded-[3rem] border p-8 transition-all"
             >
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-                {/* COLUNA 1: INFO DO CURSO */}
-                <div className="space-y-6 lg:col-span-4 min-w-0">
+                {/* COLUNA 1: INFO Do Treinamento */}
+                <div className="min-w-0 space-y-6 lg:col-span-4">
                   <div className="min-w-0">
-                    <h3 className="text-2xl leading-tight font-black text-foreground uppercase italic truncate">
+                    <h3 className="text-foreground truncate text-2xl leading-tight font-black uppercase italic">
                       {train.titulo}
                     </h3>
-                    <p className="mt-1 text-[10px] font-bold text-muted-foreground uppercase">
+                    <p className="text-muted-foreground mt-1 text-[10px] font-bold uppercase">
                       Carga Horária: {train.carga_horaria}h
                     </p>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex justify-between text-[10px] font-black uppercase italic">
-                      <span className="text-muted-foreground">Progresso Atual</span>
+                      <span className="text-muted-foreground">
+                        Progresso Atual
+                      </span>
                       <span className="text-primary">{train.progresso}%</span>
                     </div>
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                    <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
                       <div
-                        className="h-full bg-primary transition-all duration-1000"
+                        className="bg-primary h-full transition-all duration-1000"
                         style={{ width: `${train.progresso}%` }}
                       />
                     </div>
                   </div>
 
                   <div className="flex gap-4">
-                    <div className="flex-1 rounded-2xl border border-border bg-background p-3 text-center">
-                      <p className="text-[8px] font-black text-muted-foreground uppercase italic">
+                    <div className="border-border bg-background flex-1 rounded-2xl border p-3 text-center">
+                      <p className="text-muted-foreground text-[8px] font-black uppercase italic">
                         Tentativas
                       </p>
                       <p
@@ -128,7 +130,7 @@ export default function StudentDossierPage() {
                           "text-lg font-black italic",
                           train.tentativas_usadas >= train.max_tentativas
                             ? "text-destructive"
-                            : "text-foreground"
+                            : "text-foreground",
                         )}
                       >
                         {train.tentativas_usadas} / {train.max_tentativas}
@@ -139,7 +141,7 @@ export default function StudentDossierPage() {
 
                 {/* COLUNA 2: HISTÓRICO DE EXAMES */}
                 <div className="space-y-4 lg:col-span-4">
-                  <h4 className="flex items-center gap-2 text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+                  <h4 className="text-muted-foreground flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
                     <History size={14} /> Log de Performance
                   </h4>
                   <div className="custom-scrollbar max-h-[180px] space-y-2 overflow-y-auto pr-2">
@@ -147,9 +149,9 @@ export default function StudentDossierPage() {
                       train.historico_provas.map((attempt, idx) => (
                         <div
                           key={attempt.id}
-                          className="flex items-center justify-between rounded-xl border border-border bg-background/40 p-3"
+                          className="border-border bg-background/40 flex items-center justify-between rounded-xl border p-3"
                         >
-                          <span className="text-[9px] font-black text-muted-foreground italic">
+                          <span className="text-muted-foreground text-[9px] font-black italic">
                             #{idx + 1} TENTATIVA
                           </span>
                           <div className="flex items-center gap-3">
@@ -158,22 +160,28 @@ export default function StudentDossierPage() {
                                 "text-xs font-black italic",
                                 attempt.passou
                                   ? "text-emerald-500"
-                                  : "text-destructive"
+                                  : "text-destructive",
                               )}
                             >
                               NOTA: {attempt.pontuacao}
                             </span>
                             {attempt.passou ? (
-                              <CheckCircle size={14} className="text-emerald-500" />
+                              <CheckCircle
+                                size={14}
+                                className="text-emerald-500"
+                              />
                             ) : (
-                              <AlertCircle size={14} className="text-destructive" />
+                              <AlertCircle
+                                size={14}
+                                className="text-destructive"
+                              />
                             )}
                           </div>
                         </div>
                       ))
                     ) : (
-                      <div className="flex h-full items-center justify-center rounded-2xl border-2 border-dashed border-border py-8">
-                        <p className="text-[9px] font-black text-muted-foreground uppercase italic">
+                      <div className="border-border flex h-full items-center justify-center rounded-2xl border-2 border-dashed py-8">
+                        <p className="text-muted-foreground text-[9px] font-black uppercase italic">
                           Nenhuma tentativa realizada
                         </p>
                       </div>
@@ -182,8 +190,8 @@ export default function StudentDossierPage() {
                 </div>
 
                 {/* COLUNA 3: PAINEL DE OVERRIDES */}
-                <div className="space-y-4 rounded-[2rem] border border-primary/10 bg-card p-6 lg:col-span-4">
-                  <h4 className="flex items-center gap-2 text-[10px] font-black tracking-widest text-primary uppercase">
+                <div className="border-primary/10 bg-card space-y-4 rounded-[2rem] border p-6 lg:col-span-4">
+                  <h4 className="text-primary flex items-center gap-2 text-[10px] font-black tracking-widest uppercase">
                     <ShieldAlert size={14} /> Overrides Administrativos
                   </h4>
 
@@ -192,21 +200,25 @@ export default function StudentDossierPage() {
                       variant="outline"
                       disabled={!!isActionLoading || train.progresso === 100}
                       onClick={() => actions.approveProgress(train.training_id)}
-                      className="h-12 justify-start rounded-xl border-border bg-background text-[9px] font-black uppercase italic transition-all hover:bg-emerald-500 hover:text-white"
+                      className="border-border bg-background h-12 justify-start rounded-xl text-[9px] font-black uppercase italic transition-all hover:bg-emerald-500 hover:text-white"
                     >
                       {isThisTrainingLoading ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       ) : (
                         <LayoutDashboard className="mr-2 h-4 w-4 text-emerald-500" />
                       )}
-                      <span className="truncate">Reconstruir Caminho (Aulas/Quiz)</span>
+                      <span className="truncate">
+                        Reconstruir Caminho (Aulas/Quiz)
+                      </span>
                     </Button>
 
                     <Button
                       variant="outline"
-                      disabled={!!isActionLoading || train.status === "concluido"}
+                      disabled={
+                        !!isActionLoading || train.status === "concluido"
+                      }
                       onClick={() => actions.passExam(train.training_id)}
-                      className="h-12 justify-start rounded-xl border-border bg-background text-[9px] font-black uppercase italic transition-all hover:bg-blue-600 hover:text-white"
+                      className="border-border bg-background h-12 justify-start rounded-xl text-[9px] font-black uppercase italic transition-all hover:bg-blue-600 hover:text-white"
                     >
                       {isThisTrainingLoading ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -218,32 +230,41 @@ export default function StudentDossierPage() {
 
                     <Button
                       variant="outline"
-                      disabled={!!isActionLoading || train.tentativas_usadas === 0}
+                      disabled={
+                        !!isActionLoading || train.tentativas_usadas === 0
+                      }
                       onClick={() => actions.resetExams(train.training_id)}
-                      className="h-12 justify-start rounded-xl border-border bg-background text-[9px] font-black uppercase italic transition-all hover:bg-destructive hover:text-destructive-foreground"
+                      className="border-border bg-background hover:bg-destructive hover:text-destructive-foreground h-12 justify-start rounded-xl text-[9px] font-black uppercase italic transition-all"
                     >
                       {isThisTrainingLoading ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       ) : (
-                        <RotateCcw className="mr-2 h-4 w-4 text-destructive" />
+                        <RotateCcw className="text-destructive mr-2 h-4 w-4" />
                       )}
-                      <span className="truncate">Resetar Todas as Tentativas</span>
+                      <span className="truncate">
+                        Resetar Todas as Tentativas
+                      </span>
                     </Button>
                   </div>
 
                   {hasModules && (
-                    <div className="border-t border-border pt-2">
+                    <div className="border-border border-t pt-2">
                       <Button
                         variant="ghost"
                         disabled={!!isActionLoading}
-                        onClick={() => setSelectedTrainingModules(train.modules)}
-                        className="h-8 w-full justify-start p-0 text-[8px] font-black text-muted-foreground uppercase hover:text-primary transition-colors"
+                        onClick={() =>
+                          setSelectedTrainingModules(train.modules)
+                        }
+                        className="text-muted-foreground hover:text-primary h-8 w-full justify-start p-0 text-[8px] font-black uppercase transition-colors"
                       >
                         <Zap className="mr-2 h-3 w-3 text-yellow-500" />
-                        <span className="truncate">Destravar Módulo Individual</span>
+                        <span className="truncate">
+                          Destravar Módulo Individual
+                        </span>
                       </Button>
-                      <p className="mt-2 text-[7px] leading-tight font-bold text-muted-foreground uppercase italic">
-                        * Selecione um módulo específico para forçar a conclusão.
+                      <p className="text-muted-foreground mt-2 text-[7px] leading-tight font-bold uppercase italic">
+                        * Selecione um módulo específico para forçar a
+                        conclusão.
                       </p>
                     </div>
                   )}

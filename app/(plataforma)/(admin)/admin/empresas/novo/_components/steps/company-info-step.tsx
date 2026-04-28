@@ -23,7 +23,7 @@ export function CompanyInfoStep({ register, setValue, errors }: StepProps) {
         </div>
         <div className="space-y-1">
           <h2 className="text-2xl font-black tracking-tight text-foreground italic uppercase">Perfil da Empresa</h2>
-          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em]">Dados cadastrais para faturamento e contrato</p>
+          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.15em]">Dados cadastrais</p>
         </div>
       </div>
       

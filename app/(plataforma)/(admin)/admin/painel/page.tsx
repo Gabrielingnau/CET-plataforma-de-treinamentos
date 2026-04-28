@@ -23,7 +23,7 @@ export default function AdminDashboardPage() {
       <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-background">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
         <p className="animate-pulse text-[10px] font-black tracking-[0.3em] text-muted-foreground uppercase">
-          Carregando Inteligência...
+          Carregando...
         </p>
       </div>
     )
@@ -37,7 +37,7 @@ export default function AdminDashboardPage() {
       color: "text-sky-500",
     },
     {
-      label: "Unidades",
+      label: "Empresas",
       value: data?.stats.empresasAtivas,
       icon: Building2,
       color: "text-orange-500",
@@ -62,12 +62,12 @@ export default function AdminDashboardPage() {
       <header className="flex flex-col justify-between gap-6 border-b border-border py-6 md:flex-row md:items-end">
         <div className="max-w-full md:max-w-2xl">
           <h1 className="text-4xl font-black tracking-tighter uppercase italic md:text-5xl truncate">
-            Central <span className="text-primary">Intelligence</span>
+            Painel <span className="text-primary">Central</span>
           </h1>
           <div className="mt-2 flex items-center gap-2">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500 shrink-0" />
             <p className="text-[9px] font-black tracking-[0.3em] text-muted-foreground uppercase truncate">
-              Real-time Analytics System
+              Análises do sistema
             </p>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function AdminDashboardPage() {
           ) : (
             <RefreshCw className="mr-2 h-4 w-4" />
           )}
-          Refresh System
+          recarregar
         </Button>
       </header>
 
@@ -114,7 +114,7 @@ export default function AdminDashboardPage() {
       <section className="space-y-6">
         <div className="flex items-center justify-between px-2">
           <h2 className="flex items-center gap-2 text-[11px] font-black tracking-[0.2em] text-muted-foreground uppercase italic truncate mr-4">
-            <Activity className="h-4 w-4 text-primary shrink-0" /> Performance por Unidade
+            <Activity className="h-4 w-4 text-primary shrink-0" /> Performance por empresa
           </h2>
           <span className="text-[9px] font-bold text-muted-foreground uppercase italic shrink-0">
             Total: {data?.rankingEmpresas.length}
